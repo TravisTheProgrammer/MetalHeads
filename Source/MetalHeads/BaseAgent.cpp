@@ -10,13 +10,33 @@ ABaseAgent::ABaseAgent()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Add default components to all properties in the editor
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	mainFlipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("AnimComponent"));
 
+	headBox = CreateDefaultSubobject<UBoxComponent>(TEXT("HeadHitbox"));
+	torsoBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TorsoHitbox"));
+	leftArmBox = CreateDefaultSubobject<UBoxComponent>(TEXT("LeftArmHitbox"));
+	rightArmBox = CreateDefaultSubobject<UBoxComponent>(TEXT("RightHitbox"));
+	leftLegBox = CreateDefaultSubobject<UBoxComponent>(TEXT("LeftLegHitbox"));
+	rightLegBox = CreateDefaultSubobject<UBoxComponent>(TEXT("RightLegHitbox"));
+
+	// Bind hitbox colliders
+	headBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
+	torsoBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
+	leftArmBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
+	rightArmBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
+	leftLegBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
+	rightLegBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
+
+	// Attach components to root
+	headBox->AttachTo(RootComponent);
 	mainFlipbook->AttachTo(RootComponent);
-	UPaperFlipbook* testFlip = Cast<UPaperFlipbook>(StaticLoadObject(UPaperFlipbook::StaticClass(), NULL, TEXT("PaperFlipbook'/Game/Art/Sprites/TestBook.TestBook'")));
+
+	// Final tweaks before construction is done
+	UPaperFlipbook* testFlip = Cast<UPaperFlipbook>(StaticLoadObject(UPaperFlipbook::StaticClass(), NULL, TEXT("PaperFlipbook'/Game/Art/Sprites/MH_Testaim_Flipbook.MH_Testaim_Flipbook'")));
 	mainFlipbook->SetFlipbook(testFlip);
-	RotateFlipbookTowardsCamera();
+
 }
 
 // Called when the game starts or when spawned
@@ -30,7 +50,14 @@ void ABaseAgent::BeginPlay()
 void ABaseAgent::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-	ABaseAgent::RotateFlipbookTowardsCamera();
+	
+	UCameraComponent* mainCam = AMetalHeadsGameMode::GetMainCamera();
+
+	// double check the pointer
+	if (mainCam)
+	{
+		AMetalHeadsGameMode::RotateFlipbookOrtho(mainFlipbook, mainCam->ComponentToWorld.Rotator());
+	}
 }
 
 // Called to bind functionality to input
@@ -48,45 +75,8 @@ void ABaseAgent::Shoot()
 {
 }
 
-
-void ABaseAgent::RotateFlipbookTowardsCamera()
-{
-	if (!mainCam) {
-		// if we haven't set our main camera pointer yet, go get it
-		mainCam = AMetalHeadsGameMode::GetMainCamera();
-	}
-	if (!mainCam)
-	{
-		// double check the pointer
-#if UE_BUILD_DEBUG
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "ERROR: No Main Camera Found!");
-#endif
-		return;
-	}
-	
-	//FVector directionVector =  mainFlipbook->ComponentToWorld.GetLocation() - mainCam->ComponentToWorld.GetLocation();
-	//directionVector.Normalize();
-	// "look at"
-	//FRotator flipbookRot = FRotationMatrix::MakeFromZ(directionVector).Rotator();
-	//flipbookRot.Yaw = 90;
-
-	// invert our direction
-	//directionVector = -directionVector;
-
-	//
-	//FRotator flipbookRot = FRotator::ZeroRotator;
-	//flipbookRot.Pitch = 135;
-	//flipbookRot.Roll = -45;
-	//flipbookRot.Yaw = 0;
-
-	// See what the camera's rotation is
-	FRotator camRot = mainCam->ComponentToWorld.Rotator();
-
-	// Adjust for our own rotator
-	FRotator flipbookRot = FRotator();
-	flipbookRot.Roll = camRot.Pitch;
-	flipbookRot.Yaw = camRot.Yaw + 90;
-	
-	mainFlipbook->SetWorldRotation(flipbookRot);
+// Collision Event
+void ABaseAgent::OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {
 }
+
 

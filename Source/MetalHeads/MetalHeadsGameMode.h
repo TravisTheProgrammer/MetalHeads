@@ -1,5 +1,7 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
 #pragma once
+#include "PaperFlipbookComponent.h"
+
 #include "GameFramework/GameMode.h"
 #include "MetalHeadsGameMode.generated.h"
 
@@ -29,7 +31,8 @@ public:
 	// Returns the main camera (first spawned spec pawn)
 	static UCameraComponent* GetMainCamera();
 
-
+	// Rotates a paper2D component to face the camera
+	static void RotateFlipbookOrtho(UPaperFlipbookComponent* flipbook, FRotator camRot);
 };
 
 

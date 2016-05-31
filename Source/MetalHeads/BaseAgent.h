@@ -5,6 +5,10 @@
 #include "MetalHeadsGameMode.h"
 #include "PaperFlipbookComponent.h"
 
+// Included structs
+#include "MovementStruct.h"
+#include "StatusEffect.h"
+
 #include "GameFramework/Pawn.h"
 #include "BaseAgent.generated.h"
 
@@ -55,8 +59,8 @@ public:
 	// Fires the gun, depending on various parameters (aiming, moving, etc).
 	virtual void Shoot();
 
-	// Rotates the flipbook component to face the camera.
-	void RotateFlipbookTowardsCamera();
+	// Event for handling hit events
+	virtual void  ABaseAgent::OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	// Placeholder for "take hit" functions
 
@@ -100,18 +104,20 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Aiming)
 		float aimTime;
-	// Current status placeholder
+	
+	/* Structs */
+	
+	// Movement Data
+	UPROPERTY(EditAnywhere, Category = Struct)
+		FMovementStruct movementStruct;
 
-	// Movement handler struct placeholder
+	// Status Effect Data
+	UPROPERTY(EditAnywhere, Category = Struct)
+		FStatusEffect statusStruct;
 
 	UPROPERTY(EditAnywhere, Category = Visuals)
 		UPaperFlipbookComponent* mainFlipbook;
 
 	// AI Controller / Nav Agent placeholder
-
-private:
-
-	UPROPERTY()
-		UCameraComponent* mainCam;
 
 };
