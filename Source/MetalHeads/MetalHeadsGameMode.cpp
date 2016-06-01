@@ -27,8 +27,10 @@ void AMetalHeadsGameMode::BeginPlay()
 		SpawnParams.Instigator = Instigator;
 
 		// NOTE: test method. remove when done
-		FVector spawnPos = FVector(0, 0, 200);
-		ABaseAgent* agent = world->SpawnActor<ABaseAgent>(ABaseAgent::StaticClass(), spawnPos, FRotator::ZeroRotator, SpawnParams);
+		FVector spawnPos = FVector(0, 0, 100);
+		FRotator spawnRot = FRotator(0, 135, 0);
+		//spawnRot.Yaw = 90;
+		ABaseAgent* agent = world->SpawnActor<ABaseAgent>(ABaseAgent::StaticClass(), spawnPos, spawnRot, SpawnParams);
 
 	}
 }
@@ -58,7 +60,7 @@ void AMetalHeadsGameMode::RotateFlipbookOrtho(UPaperFlipbookComponent* flipbook,
 
 	// Adjust for our own rotator
 	FRotator flipbookRot = FRotator();
-	flipbookRot.Roll = 0; // Ensure this is 0, otherwise BAD THINGS HAPPEN;
+	flipbookRot.Pitch = 0; // Ensure this is 0, otherwise BAD THINGS HAPPEN;
 	flipbookRot.Roll = camRot.Pitch;
 	flipbookRot.Yaw = camRot.Yaw + 90;
 

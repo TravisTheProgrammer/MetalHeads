@@ -4,6 +4,7 @@
 
 #include "MetalHeadsGameMode.h"
 #include "PaperFlipbookComponent.h"
+#include "Gun.h"
 
 // Included structs
 #include "MovementStruct.h"
@@ -74,7 +75,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		ETeam currentTeam;
 
-	// Gun placeholder
+	// Gun Actor Component, handles all gun logic
+	UPROPERTY(EditAnywhere)
+		UGun* myGun;
 
 	// Body colliders
 	UPROPERTY(EditAnywhere, Category = Hitboxes)

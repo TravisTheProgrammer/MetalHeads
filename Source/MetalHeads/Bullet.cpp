@@ -13,6 +13,8 @@ ABullet::ABullet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 	bulletCollider = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("Bullet Collider"));
 	// default bullet size as a safety measure
 	bulletCollider->InitSphereRadius(1);
+	bulletCollider->SetSimulatePhysics(true);
+	bulletCollider->BodyInstance.SetCollisionProfileName("BlockAll");
 	RootComponent = bulletCollider;
 
 	// set up visual component

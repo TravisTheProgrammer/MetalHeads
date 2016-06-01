@@ -13,6 +13,7 @@ ABaseAgent::ABaseAgent()
 	// Add default components to all properties in the editor
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	mainFlipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("AnimComponent"));
+	myGun = CreateDefaultSubobject<UGun>(TEXT("MyGun"));
 
 	headBox = CreateDefaultSubobject<UBoxComponent>(TEXT("HeadHitbox"));
 	torsoBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TorsoHitbox"));
@@ -35,6 +36,7 @@ ABaseAgent::ABaseAgent()
 
 	// Final tweaks before construction is done
 	UPaperFlipbook* testFlip = Cast<UPaperFlipbook>(StaticLoadObject(UPaperFlipbook::StaticClass(), NULL, TEXT("PaperFlipbook'/Game/Art/Sprites/MH_Testaim_Flipbook.MH_Testaim_Flipbook'")));
+	mainFlipbook->SetRelativeLocation(FVector(0, 0, 80));
 	mainFlipbook->SetFlipbook(testFlip);
 
 }

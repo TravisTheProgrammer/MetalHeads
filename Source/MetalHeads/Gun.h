@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include "Bullet.h"
+#include "PaperFlipbookComponent.h"
+
 #include "Components/ActorComponent.h"
 #include "Gun.generated.h"
 

@@ -31,10 +31,24 @@ void UGun::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentT
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
+	this->ShootGun(0);
 	// ...
 }
 
 void UGun::ShootGun(float shotAngle) {
+	
+	// Testing phase one: shoot straight
+	FVector initDirection = this->GetOwner()->GetActorForwardVector();
+	initDirection.Normalize();
 
+	UPaperFlipbookComponent* potentialFlipbook = this->GetOwner()->FindComponentByClass<UPaperFlipbookComponent>();
+	if (!potentialFlipbook) {
+		return;
+	}
+	FVector spawnPos = potentialFlipbook->GetSocketLocation(TEXT("GunBarrel"));
+	FRotator spawnRot = this->GetOwner()->GetActorRotation();
+
+	ABullet* bullet = this->World->SpawnActor<ABullet>(ABullet::StaticClass(), spawnPos, spawnRot);
+	bullet->Init(initDirection, 10);
 }
 
