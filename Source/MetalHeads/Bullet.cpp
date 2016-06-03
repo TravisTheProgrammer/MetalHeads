@@ -14,7 +14,7 @@ ABullet::ABullet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 	// default bullet size as a safety measure
 	bulletCollider->InitSphereRadius(1);
 	bulletCollider->SetSimulatePhysics(true);
-	bulletCollider->BodyInstance.SetCollisionProfileName("BlockAll");
+	bulletCollider->BodyInstance.SetCollisionProfileName("Bullet");
 	RootComponent = bulletCollider;
 
 	// set up visual component
@@ -31,6 +31,8 @@ ABullet::ABullet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 	bulletMovement->bShouldBounce = true;
 	bulletMovement->Bounciness = 0.3f;
 
+	// Bullet max lifespan
+	InitialLifeSpan = 3.0f;
 
 }
 
