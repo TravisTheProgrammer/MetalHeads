@@ -27,6 +27,9 @@ public:
 
 	void Init(FVector bulletDirection, const float& bulletRadius);
 
+	UFUNCTION()
+		void OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 	/* Properties */
 
 	// Nice simple sphere collider to detect our collides

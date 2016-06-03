@@ -12,9 +12,14 @@ ABullet::ABullet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 
 	bulletCollider = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("Bullet Collider"));
 	// default bullet size as a safety measure
-	bulletCollider->InitSphereRadius(1);
+	bulletCollider->InitSphereRadius(0.5f);
 	bulletCollider->SetSimulatePhysics(true);
+	bulletCollider->SetNotifyRigidBodyCollision(true);
 	bulletCollider->BodyInstance.SetCollisionProfileName("Bullet");
+	bulletCollider->BodyInstance.SetMassScale(0.01f);
+	// NOTE: Would like to simulate SOME gravity in the future
+	//bulletCollider->SetEnableGravity(false);
+	bulletCollider->OnComponentHit.AddDynamic(this, &ABullet::OnHit);
 	RootComponent = bulletCollider;
 
 	// set up visual component
@@ -25,14 +30,14 @@ ABullet::ABullet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 
 	bulletMovement = ObjectInitializer.CreateDefaultSubobject<UProjectileMovementComponent>(this, TEXT("Bullet Movement"));
 	bulletMovement->UpdatedComponent = bulletCollider;
-	bulletMovement->InitialSpeed = 3000.0f;
-	bulletMovement->MaxSpeed = 3000.0f;
+	bulletMovement->InitialSpeed = 7900.0f;
+	bulletMovement->MaxSpeed = 7900.0f;
 	bulletMovement->bRotationFollowsVelocity = true;
 	bulletMovement->bShouldBounce = true;
 	bulletMovement->Bounciness = 0.3f;
 
-	// Bullet max lifespan
-	InitialLifeSpan = 3.0f;
+	// Bullet max lifespan, in case it flies into the sky or something
+	InitialLifeSpan = 15.0f;
 
 }
 
@@ -62,14 +67,32 @@ void ABullet::Init(FVector bulletDirection, const float& bulletRadius)
 	if (!bulletMovement || !bulletCollider) {
 		return;
 	}
+	bulletSize = bulletRadius * 0.1f;
 
 	// Set our bullet size
-	bulletCollider->SetSphereRadius(bulletRadius);
-	bulletSize = bulletRadius;
+	bulletCollider->SetSphereRadius(bulletSize);
+	bulletSize = bulletSize;
+	myFlipbook->RelativeScale3D = FVector(1, 1, 1) * (bulletSize);
 
 	// Ensure normalization
 	bulletDirection.Normalize();
 
 	bulletMovement->Velocity = bulletDirection * bulletMovement->InitialSpeed;
 }
+
+void ABullet::OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherActor && (OtherActor != this) && OtherComp)
+	{
+		// placeholder for hit logic
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, OtherActor->GetName());
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, OtherComp->GetName());
+		if (OtherActor->GetName().Contains(TEXT("Floor"))) {
+			// Floor richochets would be too ridic... maybe
+			Destroy();
+		}
+	}
+}
+
+
 

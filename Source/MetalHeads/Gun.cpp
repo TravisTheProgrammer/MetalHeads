@@ -30,8 +30,10 @@ void UGun::BeginPlay()
 void UGun::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
-
-	this->ShootGun(0);
+	
+	if (FMath::RandRange(1, 20) == 20) {
+		this->ShootGun(0);
+	}
 	// ...
 }
 
@@ -49,6 +51,6 @@ void UGun::ShootGun(float shotAngle) {
 	FRotator spawnRot = this->GetOwner()->GetActorRotation();
 
 	ABullet* bullet = this->World->SpawnActor<ABullet>(ABullet::StaticClass(), spawnPos, spawnRot);
-	bullet->Init(initDirection, 10);
+	bullet->Init(initDirection, 5);
 }
 
