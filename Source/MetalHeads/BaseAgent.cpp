@@ -14,6 +14,8 @@ ABaseAgent::ABaseAgent()
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	mainFlipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("AnimComponent"));
 	myGun = CreateDefaultSubobject<UGun>(TEXT("MyGun"));
+	//navsys = CreateDefaultSubobject<UNavigationSystem>(TEXT("NavSystem"));
+	//agentAI = CreateDefaultSubobject<AAgentController>(TEXT("AgentController"));
 
 	headBox = CreateDefaultSubobject<UBoxComponent>(TEXT("HeadHitbox"));
 	torsoBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TorsoHitbox"));
@@ -21,14 +23,6 @@ ABaseAgent::ABaseAgent()
 	rightArmBox = CreateDefaultSubobject<UBoxComponent>(TEXT("RightHitbox"));
 	leftLegBox = CreateDefaultSubobject<UBoxComponent>(TEXT("LeftLegHitbox"));
 	rightLegBox = CreateDefaultSubobject<UBoxComponent>(TEXT("RightLegHitbox"));
-
-	// Bind hitbox colliders
-	headBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
-	torsoBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
-	leftArmBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
-	rightArmBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
-	leftLegBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
-	rightLegBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
 
 	// Attach components to root
 	headBox->AttachTo(RootComponent);
@@ -45,6 +39,14 @@ ABaseAgent::ABaseAgent()
 void ABaseAgent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Bind hitbox colliders
+	headBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
+	torsoBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
+	leftArmBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
+	rightArmBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
+	leftLegBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
+	rightLegBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
 	
 }
 

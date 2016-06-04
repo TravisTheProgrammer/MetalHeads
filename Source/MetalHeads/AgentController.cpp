@@ -2,17 +2,18 @@
 
 #include "MetalHeads.h"
 #include "AgentController.h"
+#include "BaseAgent.h"
 
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h" // hmm...
 
 #include "Perception/PawnSensingComponent.h"
 
 AAgentController::AAgentController()
 {
 	blackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackBoardComp"));
-
 	behaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorComp"));
 
 	/* Our sensing component to detect players by visibility and noise checks. */
@@ -92,7 +93,7 @@ void AAgentController::FindClosestEnemy()
 		if (CurrentLocation != BestEnemy->GetActorLocation()) {
 			StopMovement();
 			 int MoveTargetKey = blackboardComponent->GetKeyID("MoveTarget");
-			blackboardComponent->SetValueAsVector(MoveTargetKey, BestEnemy->GetActorLocation());
+			blackboardComponent->SetValue<UBlackboardKeyType_Vector>(MoveTargetKey, BestEnemy->GetActorLocation());
 		}
 
 	}

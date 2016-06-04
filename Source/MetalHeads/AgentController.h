@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "BaseAgent.h"
-
 #include "AIController.h"
 #include "AgentController.generated.h"
 
