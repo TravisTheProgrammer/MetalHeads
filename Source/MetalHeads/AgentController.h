@@ -1,0 +1,48 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "BaseAgent.h"
+
+#include "AIController.h"
+#include "AgentController.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class METALHEADS_API AAgentController : public AAIController
+{
+	GENERATED_BODY()
+
+	AAgentController();
+
+	virtual void Possess(class APawn* InPawn) override;
+
+	virtual void BeginPlay() override;
+
+	// Called every frame
+	virtual void Tick(float DeltaSeconds) override;
+	
+public:
+
+	/* Properties */
+
+	UPROPERTY(EditAnywhere)
+		class UPawnSensingComponent* PawnSensingComp;
+	
+	UPROPERTY(EditAnywhere)
+		UBehaviorTreeComponent* behaviorTreeComponent;
+
+	UPROPERTY(EditAnywhere)
+		UBlackboardComponent* blackboardComponent;
+
+	/* Functions */
+
+	UFUNCTION()
+		void OnSeePawn(APawn* enemyAgent);
+
+	void FindClosestEnemy();
+	
+	
+};

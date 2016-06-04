@@ -3,6 +3,7 @@
 #pragma once
 
 #include "MetalHeadsGameMode.h"
+#include "AgentController.h"
 #include "PaperFlipbookComponent.h"
 #include "Gun.h"
 
@@ -122,5 +123,10 @@ public:
 		UPaperFlipbookComponent* mainFlipbook;
 
 	// AI Controller / Nav Agent placeholder
+	UPROPERTY(EditAnywhere, Category = AI)
+		UNavigationSystem* navsys;
+
+	//UPROPERTY(EditAnywhere, Category = AI)
+
 
 };

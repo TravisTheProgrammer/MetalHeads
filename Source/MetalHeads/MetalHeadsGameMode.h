@@ -33,6 +33,16 @@ public:
 
 	// Rotates a paper2D component to face the camera
 	static void RotateFlipbookOrtho(UPaperFlipbookComponent* flipbook, FRotator camRot);
+
+	// Convienience method to load objects
+	template <typename ObjClass>
+	static ObjClass* LoadObjFromPath(const FName& Path) {
+		if (Path == NAME_None) return NULL;
+
+		return Cast<ObjClass>(StaticLoadObject(ObjClass::StaticClass(), NULL, *Path.ToString()));
+	}
+
+
 };
 
 

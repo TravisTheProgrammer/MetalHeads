@@ -66,3 +66,4 @@ void AMetalHeadsGameMode::RotateFlipbookOrtho(UPaperFlipbookComponent* flipbook,
 
 	flipbook->SetWorldRotation(flipbookRot);
 }
+

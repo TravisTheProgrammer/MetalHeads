@@ -16,7 +16,7 @@ ABullet::ABullet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 	bulletCollider->SetSimulatePhysics(true);
 	bulletCollider->SetNotifyRigidBodyCollision(true);
 	bulletCollider->BodyInstance.SetCollisionProfileName("Bullet");
-	bulletCollider->BodyInstance.SetMassScale(0.01f);
+	// bulletCollider->BodyInstance.SetMassScale(0.01f);
 	// NOTE: Would like to simulate SOME gravity in the future
 	//bulletCollider->SetEnableGravity(false);
 	bulletCollider->OnComponentHit.AddDynamic(this, &ABullet::OnHit);
