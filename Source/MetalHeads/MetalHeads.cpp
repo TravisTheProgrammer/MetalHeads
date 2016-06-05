@@ -2,6 +2,8 @@
 
 #include "MetalHeads.h"
 
+// NOTE: Cheeky placement of my main game mode for universal access
+#include "MetalHeadsGameMode.h"
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, MetalHeads, "MetalHeads" );
 

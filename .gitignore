@@ -59,3 +59,4 @@ DerivedDataCache/*
 
 # Custom
 *.db
+*.opendb
