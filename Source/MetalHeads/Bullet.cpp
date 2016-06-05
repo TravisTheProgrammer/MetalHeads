@@ -13,7 +13,7 @@ ABullet::ABullet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 	bulletCollider = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("Bullet Collider"));
 	// default bullet size as a safety measure
 	bulletCollider->InitSphereRadius(0.5f);
-	bulletCollider->SetSimulatePhysics(true);
+	//bulletCollider->SetSimulatePhysics(true);   // THIS WAS A GOD DAMN TRAP FOR PROJECTILE MOVEMENT
 	bulletCollider->SetNotifyRigidBodyCollision(true);
 	bulletCollider->BodyInstance.SetCollisionProfileName("Bullet");
 	// bulletCollider->BodyInstance.SetMassScale(0.01f);
@@ -30,8 +30,6 @@ ABullet::ABullet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 
 	bulletMovement = ObjectInitializer.CreateDefaultSubobject<UProjectileMovementComponent>(this, TEXT("Bullet Movement"));
 	bulletMovement->UpdatedComponent = bulletCollider;
-	bulletMovement->InitialSpeed = 7900.0f;
-	bulletMovement->MaxSpeed = 7900.0f;
 	bulletMovement->bRotationFollowsVelocity = true;
 	bulletMovement->bShouldBounce = true;
 	bulletMovement->Bounciness = 0.3f;
@@ -62,22 +60,21 @@ void ABullet::Tick( float DeltaTime )
 	}
 }
 
-void ABullet::Init(FVector bulletDirection, const float& bulletRadius) 
+void ABullet::Init(FVector bulletDirection, const float& bulletRadius, const float& bulletVelocity)
 {
 	if (!bulletMovement || !bulletCollider) {
 		return;
 	}
-	bulletSize = bulletRadius * 0.1f;
+	float bulletSize = bulletRadius * 0.1f;
 
 	// Set our bullet size
 	bulletCollider->SetSphereRadius(bulletSize);
-	bulletSize = bulletSize;
 	myFlipbook->RelativeScale3D = FVector(1, 1, 1) * (bulletSize);
 
 	// Ensure normalization
 	bulletDirection.Normalize();
 
-	bulletMovement->Velocity = bulletDirection * bulletMovement->InitialSpeed;
+	bulletMovement->Velocity = bulletDirection * bulletVelocity;
 }
 
 void ABullet::OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)

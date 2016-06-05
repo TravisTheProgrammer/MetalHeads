@@ -14,8 +14,6 @@ ABaseAgent::ABaseAgent()
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	mainFlipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("AnimComponent"));
 	myGun = CreateDefaultSubobject<UGun>(TEXT("MyGun"));
-	//navsys = CreateDefaultSubobject<UNavigationSystem>(TEXT("NavSystem"));
-	//agentAI = CreateDefaultSubobject<AAgentController>(TEXT("AgentController"));
 
 	headBox = CreateDefaultSubobject<UBoxComponent>(TEXT("HeadHitbox"));
 	torsoBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TorsoHitbox"));
@@ -47,7 +45,7 @@ void ABaseAgent::BeginPlay()
 	rightArmBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
 	leftLegBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
 	rightLegBox->OnComponentHit.AddDynamic(this, &ABaseAgent::OnHit);
-	
+
 }
 
 // Called every frame
@@ -62,6 +60,13 @@ void ABaseAgent::Tick( float DeltaTime )
 	{
 		AMetalHeadsGameMode::RotateFlipbookOrtho(mainFlipbook, mainCam->ComponentToWorld.Rotator());
 	}
+
+	//if (FMath::RandRange(1, 20) == 20) {
+		if (myGun) {
+			//this->myGun->ShootGun(FMath::FRandRange(0, 10.0f));
+			this->myGun->ShootGun(45.0f);
+		}
+	//}
 }
 
 // Called to bind functionality to input

@@ -12,6 +12,8 @@ UCLASS()
 class METALHEADS_API AAgentController : public AAIController
 {
 	GENERATED_BODY()
+	
+public:
 
 	AAgentController();
 
@@ -21,8 +23,6 @@ class METALHEADS_API AAgentController : public AAIController
 
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
-	
-public:
 
 	/* Properties */
 

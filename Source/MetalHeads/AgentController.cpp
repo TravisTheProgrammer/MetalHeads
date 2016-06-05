@@ -33,7 +33,6 @@ void AAgentController::BeginPlay()
 		PawnSensingComp->OnSeePawn.AddDynamic(this, &AAgentController::OnSeePawn);
 	}
 
-
 }
 
 void AAgentController::Tick(float DeltaTime)
@@ -52,9 +51,10 @@ void AAgentController::Possess(APawn* InPawn)
 
 	UBlackboardData *blackboardData = AMetalHeadsGameMode::LoadObjFromPath<UBlackboardData>("BehaviorTree'/Game/AI/BT_BaseAgent.BT_BaseAgent'");
 
-	blackboardComponent->InitializeBlackboard(*blackboardData);
-	behaviorTreeComponent->StartTree(*behaviourTreeObject);
+	//blackboardComponent->InitializeBlackboard(*blackboardData);
+	//behaviorTreeComponent->StartTree(*behaviourTreeObject);
 
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "ASSUMING DIRECT CONTROL" );
 }
 
 void AAgentController::FindClosestEnemy()

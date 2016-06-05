@@ -42,9 +42,14 @@ public:
 	UPROPERTY(EditAnywhere)
 		int32 bulletsPerBurst;
 
-	// How big the bullet spawned is. To be realistic, values between 0.3 and 1 should be used.
+	// How big the bullet spawned is. To be realistic, values between 3(mm) and 10(mm) should be used.
 	UPROPERTY(EditAnywhere)
-		float bulletSize;
+		float bulletSize = 9;
+
+	// How fast the bullet is. IRL .303 enfield is ~750 m/s, while 9mm parabellum is ~370 m/s 
+	// Default speed is .303
+	UPROPERTY(EditAnywhere)
+		float bulletSpeed = 3700.0f;
 
 	// How many bullets you can fire before the magazine is empty
 	UPROPERTY(EditAnywhere)

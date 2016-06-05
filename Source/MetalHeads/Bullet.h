@@ -25,7 +25,8 @@ public:
 
 	/* Functions */
 
-	void Init(FVector bulletDirection, const float& bulletRadius);
+	// Set up the bullet
+	void Init(FVector bulletDirection, const float& bulletRadius, const float& bulletVelocity);
 
 	UFUNCTION()
 		void OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
@@ -39,10 +40,6 @@ public:
 	// Aw yeah built in bullet physics!
 	UPROPERTY(EditAnywhere)
 		UProjectileMovementComponent* bulletMovement;
-
-	// How big the bullet's radius is. This should be set by the initializer
-	UPROPERTY(EditAnywhere)
-		float bulletSize;
 
 	// Visual flipbook component for the bullet
 	UPROPERTY(EditAnywhere)

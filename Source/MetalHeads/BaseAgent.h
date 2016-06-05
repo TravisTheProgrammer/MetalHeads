@@ -122,10 +122,4 @@ public:
 	UPROPERTY(EditAnywhere, Category = Visuals)
 		UPaperFlipbookComponent* mainFlipbook;
 
-	// AI Controller / Nav Agent
-	UPROPERTY(EditAnywhere, Category = AI)
-		UNavigationSystem* navsys;
-
-	UPROPERTY(EditAnywhere, Category = AI)
-		class AAgentController* agentAI;
 };
