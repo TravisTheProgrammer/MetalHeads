@@ -29,6 +29,7 @@ ABullet::ABullet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 	myFlipbook->SetFlipbook(bulletFlip);
 
 	bulletMovement = ObjectInitializer.CreateDefaultSubobject<UProjectileMovementComponent>(this, TEXT("Bullet Movement"));
+	bulletMovement->InitialSpeed = 120.0f;
 	bulletMovement->UpdatedComponent = bulletCollider;
 	bulletMovement->bRotationFollowsVelocity = true;
 	bulletMovement->bShouldBounce = true;
@@ -50,6 +51,10 @@ void ABullet::BeginPlay()
 void ABullet::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+	if (bulletMovement->Velocity.Size() < 100.0f) {
+		Destroy();
+	}
 
 	UCameraComponent* mainCam = AMetalHeadsGameMode::GetMainCamera();
 
@@ -82,8 +87,8 @@ void ABullet::OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherCo
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
 		// placeholder for hit logic
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, OtherActor->GetName());
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, OtherComp->GetName());
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, OtherActor->GetName());
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, OtherComp->GetName());
 		if (OtherActor->GetName().Contains(TEXT("Floor"))) {
 			// Floor richochets would be too ridic... maybe
 			Destroy();

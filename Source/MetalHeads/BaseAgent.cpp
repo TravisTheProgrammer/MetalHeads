@@ -63,8 +63,7 @@ void ABaseAgent::Tick( float DeltaTime )
 
 	//if (FMath::RandRange(1, 20) == 20) {
 		if (myGun) {
-			//this->myGun->ShootGun(FMath::FRandRange(0, 10.0f));
-			this->myGun->ShootGun(45.0f);
+			this->myGun->ShootGun(FMath::FRandRange(0, 45.0f));
 		}
 	//}
 }
