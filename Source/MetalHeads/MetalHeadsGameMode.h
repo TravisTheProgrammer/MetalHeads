@@ -32,7 +32,7 @@ public:
 	static UCameraComponent* GetMainCamera();
 
 	// Rotates a paper2D component to face the camera
-	static void RotateFlipbookOrtho(UPaperFlipbookComponent* flipbook, FRotator camRot);
+	static void RotateOrtho(USceneComponent* object, FRotator camRot);
 
 	// Convienience method to load objects
 	template <typename ObjClass>
@@ -41,7 +41,6 @@ public:
 
 		return Cast<ObjClass>(StaticLoadObject(ObjClass::StaticClass(), NULL, *Path.ToString()));
 	}
-
 
 };
 

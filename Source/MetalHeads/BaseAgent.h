@@ -80,6 +80,12 @@ public:
 	UPROPERTY(EditAnywhere)
 		UGun* myGun;
 
+	// Placeholder info obj
+	UPROPERTY(EditAnywhere)
+		UTextRenderComponent* statusText;
+	UPROPERTY(EditAnywhere)
+		UTextRenderComponent* woundText;
+
 	// Body colliders
 	UPROPERTY(EditAnywhere, Category = Hitboxes)
 		UBoxComponent* headBox;

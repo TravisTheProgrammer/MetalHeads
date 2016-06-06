@@ -61,7 +61,7 @@ void ABullet::Tick( float DeltaTime )
 	// double check the pointer
 	if (mainCam)
 	{
-		AMetalHeadsGameMode::RotateFlipbookOrtho(myFlipbook, mainCam->ComponentToWorld.Rotator());
+		AMetalHeadsGameMode::RotateOrtho(myFlipbook, mainCam->ComponentToWorld.Rotator());
 	}
 }
 

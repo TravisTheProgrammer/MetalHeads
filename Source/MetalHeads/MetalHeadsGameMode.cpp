@@ -52,9 +52,9 @@ UCameraComponent* AMetalHeadsGameMode::GetMainCamera()
 	
 }
 
-void AMetalHeadsGameMode::RotateFlipbookOrtho(UPaperFlipbookComponent* flipbook, FRotator camRot)
+void AMetalHeadsGameMode::RotateOrtho(USceneComponent* object, FRotator camRot)
 {
-	if (!flipbook) {
+	if (!object) {
 		return;
 	}
 
@@ -64,6 +64,6 @@ void AMetalHeadsGameMode::RotateFlipbookOrtho(UPaperFlipbookComponent* flipbook,
 	flipbookRot.Roll = camRot.Pitch;
 	flipbookRot.Yaw = camRot.Yaw + 90;
 
-	flipbook->SetWorldRotation(flipbookRot);
+	object->SetWorldRotation(flipbookRot);
 }
 
