@@ -37,7 +37,7 @@ enum class EHitLocation : uint8
 	COUNT
 };
 
-UCLASS()
+UCLASS(Blueprintable)
 class METALHEADS_API ABaseAgent : public APawn
 {
 	GENERATED_BODY()
@@ -61,6 +61,9 @@ public:
 	// Fires the gun, depending on various parameters (aiming, moving, etc).
 	virtual void Shoot();
 
+	// Take a wound from an incoming bullet... or if you're feeling malicious.
+	virtual void TakeWound(float woundChance, EHitLocation location);
+
 	// Event for handling hit events
 	virtual void  ABaseAgent::OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
@@ -69,10 +72,6 @@ public:
 	/* Properties */
 public:
 
-	// Root component
-	UPROPERTY(EditAnywhere)
-		USceneComponent* visibleRoot;
-
 	UPROPERTY(EditAnywhere)
 		ETeam currentTeam;
 
@@ -80,29 +79,29 @@ public:
 	UPROPERTY(EditAnywhere)
 		UGun* myGun;
 
-	// Placeholder info obj
+	// Placeholder info obj text
 	UPROPERTY(EditAnywhere)
 		UTextRenderComponent* statusText;
 	UPROPERTY(EditAnywhere)
 		UTextRenderComponent* woundText;
 
 	// Body colliders
-	UPROPERTY(EditAnywhere, Category = Hitboxes)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Hitboxes)
 		UBoxComponent* headBox;
 
-	UPROPERTY(EditAnywhere, Category = Hitboxes)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Hitboxes)
 		UBoxComponent* torsoBox;
 
-	UPROPERTY(EditAnywhere, Category = Hitboxes)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Hitboxes)
 		UBoxComponent* leftArmBox;
 
-	UPROPERTY(EditAnywhere, Category = Hitboxes)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Hitboxes)
 		UBoxComponent* rightArmBox;
 
-	UPROPERTY(EditAnywhere, Category = Hitboxes)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Hitboxes)
 		UBoxComponent* leftLegBox;
 
-	UPROPERTY(EditAnywhere, Category = Hitboxes)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Hitboxes)
 		UBoxComponent* rightLegBox;
 
 	// Our current aiming "state"

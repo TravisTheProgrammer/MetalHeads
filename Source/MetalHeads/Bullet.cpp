@@ -3,6 +3,8 @@
 #include "MetalHeads.h"
 #include "Bullet.h"
 
+#include "BaseAgent.h"
+
 
 // Sets default values
 ABullet::ABullet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -65,12 +67,14 @@ void ABullet::Tick( float DeltaTime )
 	}
 }
 
-void ABullet::Init(FVector bulletDirection, const float& bulletRadius, const float& bulletVelocity)
+void ABullet::Init(FVector bulletDirection, const float& bulletRadius, const float& lethality, const float& bulletVelocity)
 {
 	if (!bulletMovement || !bulletCollider) {
 		return;
 	}
 	float bulletSize = bulletRadius * 0.1f;
+
+	woundChance = lethality;
 
 	// Set our bullet size
 	bulletCollider->SetSphereRadius(bulletSize);
@@ -92,6 +96,14 @@ void ABullet::OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherCo
 		if (OtherActor->GetName().Contains(TEXT("Floor"))) {
 			// Floor richochets would be too ridic... maybe
 			Destroy();
+		}else{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Goodness, this bullet hit " + OtherActor->GetName()));
+			ABaseAgent* potentialAgent = Cast<ABaseAgent>(OtherActor);
+			if (potentialAgent) {
+				// Are you ready for the jankiest fix to an "on hit" bug?
+				// We input other comp to tell the base agent which hitbox the bullet hit
+				potentialAgent->OnHit(this, OtherComp, -NormalImpulse, Hit);
+			}
 		}
 	}
 }

@@ -26,7 +26,7 @@ public:
 	/* Functions */
 
 	// Set up the bullet
-	void Init(FVector bulletDirection, const float& bulletRadius, const float& bulletVelocity);
+	void Init(FVector bulletDirection, const float& bulletRadius, const float& lethality, const float& bulletVelocity);
 
 	UFUNCTION()
 		void OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
@@ -36,6 +36,10 @@ public:
 	// Nice simple sphere collider to detect our collides
 	UPROPERTY(EditAnywhere)
 		USphereComponent* bulletCollider;
+
+	// Stored value of what % chance the bullet has to wound a target, set by Init()
+	UPROPERTY(EditAnywhere)
+		float woundChance;
 
 	// Aw yeah built in bullet physics!
 	UPROPERTY(EditAnywhere)

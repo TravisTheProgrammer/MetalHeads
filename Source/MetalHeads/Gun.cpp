@@ -140,7 +140,7 @@ void UGun::Fire() {
 
 
 		ABullet* bullet = this->World->SpawnActor<ABullet>(ABullet::StaticClass(), spawnPos, spawnRot);
-		bullet->Init(initImpulseDir, bulletSize, bulletSpeed);
+		bullet->Init(initImpulseDir, bulletSize, harmChance, bulletSpeed);
 	}
 
 	remainingBullets--;

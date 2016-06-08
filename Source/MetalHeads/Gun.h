@@ -36,15 +36,6 @@ public:
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
-	// Turn gun enums values into strings (adjusted from unreal engine wiki)
-	static FString GetGunStateEnumAsString(int32 EnumValue)
-	{
-		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EGunState"), true);
-		if (!EnumPtr) return FString("Invalid");
-
-		return EnumPtr->GetEnumName(EnumValue);
-	}
-
 	/* Properties */
 
 	// How long it takes to cycle a shot
