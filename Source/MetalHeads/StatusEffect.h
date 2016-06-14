@@ -1,21 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
+
+#include "Enums.h"
+
 #include "StatusEffect.generated.h"
 
-/**
-*
-*/
 
-UENUM(BlueprintType)
-enum class EStatusEffects : uint8
-{
-	None, // Only here has a coding practice, don't use it; empty "currentStatusEffects" implies none
-	Bleeding,
-	CrippledArm,
-	CrippledLeg,
-	COUNT
-};
+/**
+*	This struct is used to contain wound status information.
+*	It is also has convienience methods to handle blood loss, penalties, etc.
+*/
 
 USTRUCT(BlueprintType)
 struct FStatusEffect
@@ -30,12 +25,30 @@ struct FStatusEffect
 	UPROPERTY()
 		int32 currentOilPoints;
 
-	// The mighty TArray of states. Since effects can stack, we need to track every one
+	// How much blood is lost per executed tick.
 	UPROPERTY()
-		TArray<EStatusEffects> currentStatusEffects;
+		int32 bloodLostPerTick;
 
-	// Constructor
+	// The mighty TArray of hits. Since they can stack, we need to collect them all.
+	UPROPERTY()
+		TArray<EHitLocation> currentStatusEffects;
+
+	// Constructor, with agent owner pointer ref
 	FStatusEffect();
 
-	// Placeholder for interal data methods / get-sets
+	// Add a status effect to the struct TArray, based on hit location
+	void AddStatus(EHitLocation statusLocation);
+
+	// Have the struct calculate penalties, either halfing or nulling multiplier
+	// Use "bleedtick" to have bleeding occur. 
+	void GetPenalties(float& outMovementPen, float& outAimPen);
+
+	// Have the struct reduce blood per tick, based on internal parameters.
+	// Call this in the agent's tick method.
+	// Returns a bool to indicate if the agent has bled out.
+	bool BleedTick();
+
+	// Returns true if a bleeding status was found, otherwise false.
+	bool IsBleeding();
+
 };

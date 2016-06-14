@@ -142,15 +142,33 @@ void ABaseAgent::Shoot()
 void ABaseAgent::TakeWound(float woundChance, EHitLocation location) {
 	float result = FMath::RandRange(1, 100);
 	if (result <= woundChance) {
-		FString locationStr = AMetalHeadsGameMode::GetEnumValueToString<EHitLocation>("EHitLocation", location);
-		FString message = this->GetName() + " has been wounded in their " + locationStr + "!";
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, message);
+		if (location == EHitLocation::Head) {
+			// congrats, you died.
+			Die(ECauseOfDeath::Headshot);
+		}
+		else {
+			statusStruct.AddStatus(location);
+		}
+		//FString locationStr = AMetalHeadsGameMode::GetEnumValueToString<EHitLocation>("EHitLocation", location);
+		//FString message = this->GetName() + " has been wounded in their " + locationStr + "!";
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, message);
 	}
 	else {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, TEXT("Bullet deflected!"));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, TEXT("Bullet deflected!"));
 	}
 
 	
+}
+
+void ABaseAgent::Die(ECauseOfDeath cod)
+{
+	// death logic.
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, TEXT("Blarg, I was shot in head!"));
+	// TODO: switch flipbook and play death animation.
+	deathStatus = cod; // Anything but "None" simply means they're dead, but a death status is
+	// passed for messages etc.
+
+	// TODO: have timer tick for length of death, then destroy this.
 }
 
 // Collision Event

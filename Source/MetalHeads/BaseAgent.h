@@ -6,36 +6,14 @@
 #include "AgentController.h"
 #include "PaperFlipbookComponent.h"
 #include "Gun.h"
+#include "Enums.h"
 
-// Included structs
-#include "MovementStruct.h"
+// structs
 #include "StatusEffect.h"
+#include "MovementStruct.h"
 
 #include "GameFramework/Pawn.h"
 #include "BaseAgent.generated.h"
-
-UENUM(BlueprintType)
-enum class EAimLocation : uint8
-{
-	None,
-	Head,
-	Body,
-	Legs,
-	COUNT
-};
-
-UENUM(BlueprintType)
-enum class EHitLocation : uint8
-{
-	None,
-	Head,
-	LeftArm,
-	RightArm,
-	Torso,
-	LeftLeg,
-	RightLeg,
-	COUNT
-};
 
 UCLASS(Blueprintable)
 class METALHEADS_API ABaseAgent : public APawn
@@ -64,8 +42,13 @@ public:
 	// Take a wound from an incoming bullet... or if you're feeling malicious.
 	virtual void TakeWound(float woundChance, EHitLocation location);
 
+	// Until death do us part (kill the agent). Pass in a cause of death.
+	virtual void Die(ECauseOfDeath cod);
+
 	// Event for handling hit events
-	virtual void  ABaseAgent::OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	// NOTE: Had to adjust function to work around a bug...
+	UFUNCTION()
+	virtual void  OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	// Placeholder for "take hit" functions
 
@@ -113,16 +96,22 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Aiming)
 		float aimTime;
+
+	// If not none, is dead.
+	UPROPERTY(EditAnywhere, Category = Status)
+		ECauseOfDeath deathStatus = ECauseOfDeath::None;
+
+	// Simple additional states
 	
 	/* Structs */
-	
-	// Movement Data
-	UPROPERTY(EditAnywhere, Category = Struct)
-		FMovementStruct movementStruct;
 
 	// Status Effect Data
 	UPROPERTY(EditAnywhere, Category = Struct)
 		FStatusEffect statusStruct;
+	
+	// Movement Data
+	UPROPERTY(EditAnywhere, Category = Struct)
+		FMovementStruct movementStruct;
 
 	UPROPERTY(EditAnywhere, Category = Visuals)
 		UPaperFlipbookComponent* mainFlipbook;

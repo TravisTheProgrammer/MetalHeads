@@ -4,22 +4,10 @@
 
 #include "Bullet.h"
 #include "PaperFlipbookComponent.h"
+#include "Enums.h"
 
 #include "Components/ActorComponent.h"
 #include "Gun.generated.h"
-
-UENUM(BlueprintType)
-enum class EGunState : uint8
-{
-	None,
-	Ready,
-	Cycling,
-	BurstFire,
-	Reloading,
-	Shooting,
-	COUNT
-};
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class METALHEADS_API UGun : public UActorComponent

@@ -1,21 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
+
+#include "Enums.h"
+
 #include "MovementStruct.generated.h"
+
+class ABaseAgent;
 
 /**
  * 
  */
 
-UENUM(BlueprintType)
-enum class EMovementState : uint8
-{
-	None, // None is different from Idle, in that None implies movement is unset entirely
-	Idle,
-	Walking,
-	Running,
-	COUNT
-};
 
 USTRUCT(BlueprintType)
 struct FMovementStruct

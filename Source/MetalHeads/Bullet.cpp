@@ -97,7 +97,7 @@ void ABullet::OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherCo
 			// Floor richochets would be too ridic... maybe
 			Destroy();
 		}else{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Goodness, this bullet hit " + OtherActor->GetName()));
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Goodness, this bullet hit " + OtherActor->GetName()));
 			ABaseAgent* potentialAgent = Cast<ABaseAgent>(OtherActor);
 			if (potentialAgent) {
 				// Are you ready for the jankiest fix to an "on hit" bug?
