@@ -10,7 +10,7 @@ FStatusEffect::FStatusEffect()
 	// The TArray starts empty to imply no status effects
 
 	// Edit blood loss per tick here.
-	bloodLostPerTick = 2;
+	oilLostPerTick = 2;
 }
 
 void FStatusEffect::AddStatus(EHitLocation statusLocation) 
@@ -18,6 +18,7 @@ void FStatusEffect::AddStatus(EHitLocation statusLocation)
 	if (statusLocation == EHitLocation::Head) {
 		// ... hmm, this shouldn't happen. BaseAgent should kill it on the spot 
 		// Let's get rid of all blood in case we somehow have this happen.
+		// This kills the Agent.
 		currentOilPoints = 0;
 	}else{
 		currentStatusEffects.Add(statusLocation);
@@ -30,3 +31,4 @@ void FStatusEffect::GetPenalties(float& outMovementPen, float& outAimPen)
 
 	}
 }
+

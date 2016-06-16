@@ -74,14 +74,13 @@ enum class EGunState : uint8
 };
 
 // Status Effect bitmask
-
 UENUM(BlueprintType)
 enum class EStatusEffectsFlags
 {
 	None = 0x00, 
 	Bleeding = 0x01,
 	CrippledArm = 0x02, // take care not to have a "crippled" and "no" state at the same time.
-	NoArms = 0x04,
+	NoArms = 0x04,		// or rather, have logic where that overlap is a problem!
 	CrippledLeg = 0x08,
 	NoLegs = 0x16
 };

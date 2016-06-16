@@ -27,17 +27,24 @@ struct FStatusEffect
 
 	// How much blood is lost per executed tick.
 	UPROPERTY()
-		int32 bloodLostPerTick;
+		int32 oilLostPerTick;
 
 	// The mighty TArray of hits. Since they can stack, we need to collect them all.
 	UPROPERTY()
 		TArray<EHitLocation> currentStatusEffects;
 
-	// Constructor, with agent owner pointer ref
+	// Bit Flags to mark all status effects.
+	//UPROPERTY()
+		//EStatusEffectsFlags statusBitMask;
+
+	// Constructor
 	FStatusEffect();
 
 	// Add a status effect to the struct TArray, based on hit location
 	void AddStatus(EHitLocation statusLocation);
+
+	// Used to update the bitmask of different status effects.
+	void UpdateStatusMask();
 
 	// Have the struct calculate penalties, either halfing or nulling multiplier
 	// Use "bleedtick" to have bleeding occur. 
