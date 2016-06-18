@@ -29,13 +29,29 @@ struct FStatusEffect
 	UPROPERTY()
 		int32 oilLostPerTick;
 
+	// Count of how many "bleeders" there are (5 count for torso, 1 for limbs)
+	UPROPERTY()
+		int32 bleedPointCount;
+
+	// NO MAGIC NUMBERS. Also, this is the worst kind of bonus...
+	UPROPERTY()
+		int32 torsoBonus;
+
 	// The mighty TArray of hits. Since they can stack, we need to collect them all.
 	UPROPERTY()
 		TArray<EHitLocation> currentStatusEffects;
 
-	// Bit Flags to mark all status effects.
-	//UPROPERTY()
-		//EStatusEffectsFlags statusBitMask;
+	// Bit mask for status effects
+	UPROPERTY()
+		uint8 statusBitMask;
+
+	// Multiplier from 1 to 0 to affect movement speed.
+	UPROPERTY()
+		float movementPenalty;
+
+	// Multipler from 1 to 0 to affect aim penalty (slowing aiming down)
+	UPROPERTY()
+		float aimPenalty;
 
 	// Constructor
 	FStatusEffect();
@@ -43,8 +59,8 @@ struct FStatusEffect
 	// Add a status effect to the struct TArray, based on hit location
 	void AddStatus(EHitLocation statusLocation);
 
-	// Used to update the bitmask of different status effects.
-	void UpdateStatusMask();
+	// Used to update bleeding and the status bitmask
+	void UpdateStatus();
 
 	// Have the struct calculate penalties, either halfing or nulling multiplier
 	// Use "bleedtick" to have bleeding occur. 
@@ -57,5 +73,7 @@ struct FStatusEffect
 
 	// Returns true if a bleeding status was found, otherwise false.
 	bool IsBleeding();
+
+	// NOTE: No method to clear bitmasks, because I don't plan healing... could though.
 
 };

@@ -36,7 +36,7 @@ public:
 	// Tells the agent to enter the aim state.
 	virtual void Aim(ABaseAgent* target);
 
-	// Fires the gun, depending on various parameters (aiming, moving, etc).
+	// Fires the gun, depending on various internal parameters (aiming, moving, etc).
 	virtual void Shoot();
 
 	// Take a wound from an incoming bullet... or if you're feeling malicious.
@@ -101,6 +101,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = Status)
 		ECauseOfDeath deathStatus = ECauseOfDeath::None;
 
+	// TODO: See if I can rid this and use a death flipbook play length instead.
+	UPROPERTY()
+		float deathDelay = 0.5f;
+
+	// Timer handlers
+	FTimerHandle DeathCountdownHandler;
+
 	// Simple additional states
 	
 	/* Structs */
@@ -115,5 +122,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Visuals)
 		UPaperFlipbookComponent* mainFlipbook;
+
+	private:
+	void JustDie() {
+		Destroy();
+	}
 
 };

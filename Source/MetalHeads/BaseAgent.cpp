@@ -117,9 +117,7 @@ void ABaseAgent::Tick( float DeltaTime )
 	}
 
 	//if (FMath::RandRange(1, 20) == 20) {
-		if (myGun) {
-			this->myGun->ShootGun(FMath::FRandRange(0, 45.0f));
-		}
+	Shoot();
 	//}
 }
 
@@ -132,10 +130,14 @@ void ABaseAgent::SetupPlayerInputComponent(class UInputComponent* InputComponent
 
 void ABaseAgent::Aim(ABaseAgent* target)
 {
+	// TODO: Logic to lerp from max gun angle to min gun angle.
 }
 
 void ABaseAgent::Shoot()
 {
+	if (myGun) {
+		this->myGun->ShootGun(FMath::FRandRange(0, 45.0f));
+	}
 }
 
 // Step one: simply register hits on hitboxes
@@ -163,12 +165,13 @@ void ABaseAgent::TakeWound(float woundChance, EHitLocation location) {
 void ABaseAgent::Die(ECauseOfDeath cod)
 {
 	// death logic.
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, TEXT("Blarg, I was shot in head!"));
+
 	// TODO: switch flipbook and play death animation.
 	deathStatus = cod; // Anything but "None" simply means they're dead, but a death status is
 	// passed for messages etc.
 
 	// TODO: have timer tick for length of death, then destroy this.
+	this->GetWorld()->GetTimerManager().SetTimer(DeathCountdownHandler, this, &ABaseAgent::JustDie, deathDelay, false);
 }
 
 // Collision Event
