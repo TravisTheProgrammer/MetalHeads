@@ -60,6 +60,31 @@ public:
 		}
 		return (EnumType)Enum->FindEnumIndex(FName(*String));
 	}
+
+	// Convienience methods to grab isometric directions based off the camera's Yaw
+	static FVector UP() 
+	{
+		FRotator rot = FRotator(0, GetMainCamera()->GetComponentRotation().Yaw, 0);
+		return rot.Vector();
+	}
+
+	static FVector DOWN()
+	{
+		FRotator rot = FRotator(0, GetMainCamera()->GetComponentRotation().Yaw + 180.0f, 0);
+		return rot.Vector();
+	}
+
+	static FVector LEFT()
+	{
+		FRotator rot = FRotator(0, GetMainCamera()->GetComponentRotation().Yaw - 90.0f, 0);
+		return rot.Vector();
+	}
+
+	static FVector RIGHT()
+	{
+		FRotator rot = FRotator(0, GetMainCamera()->GetComponentRotation().Yaw + 90.0f, 0);
+		return rot.Vector();
+	}
 };
 
 

@@ -67,7 +67,7 @@ struct FStatusEffect
 	void GetPenalties(float& outMovementPen, float& outAimPen);
 
 	// Have the struct reduce blood per tick, based on internal parameters.
-	// Call this in the agent's tick method.
+	// Call on a 1 second interval, since the scale is ml/s
 	// Returns a bool to indicate if the agent has bled out.
 	bool BleedTick();
 

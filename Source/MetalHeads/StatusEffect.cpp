@@ -104,3 +104,29 @@ void FStatusEffect::GetPenalties(float& outMovementPen, float& outAimPen)
 	
 }
 
+bool FStatusEffect::IsBleeding()
+{
+	if (bleedPointCount > 0) {
+		return true;
+	}
+	return false;
+}
+
+bool FStatusEffect::BleedTick()
+{
+	// Do nothing if not bleeding.
+	if (!IsBleeding()) {
+		return false;
+	}
+
+	currentOilPoints -= bleedPointCount;
+	// NOTE: Additional bleeding logic could be inserted here.
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::FromInt(currentOilPoints));
+
+	if (currentOilPoints < 1) {
+		return true;
+	}
+
+	return false;
+}
+

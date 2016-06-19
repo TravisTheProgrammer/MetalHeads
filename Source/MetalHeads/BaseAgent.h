@@ -45,6 +45,9 @@ public:
 	// Until death do us part (kill the agent). Pass in a cause of death.
 	virtual void Die(ECauseOfDeath cod);
 
+	// Timer event to handle bleeding per second.
+	virtual void CheckBleed();
+
 	// Event for handling hit events
 	// NOTE: Had to adjust function to work around a bug...
 	UFUNCTION()
@@ -107,6 +110,7 @@ public:
 
 	// Timer handlers
 	FTimerHandle DeathCountdownHandler;
+	FTimerHandle BleedTickPerSecondHandler;
 
 	// Simple additional states
 	
@@ -120,11 +124,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = Struct)
 		FMovementStruct movementStruct;
 
+	// Visual Component
 	UPROPERTY(EditAnywhere, Category = Visuals)
 		UPaperFlipbookComponent* mainFlipbook;
 
 	private:
 	void JustDie() {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, TEXT("Blarg I have died"));
 		Destroy();
 	}
 

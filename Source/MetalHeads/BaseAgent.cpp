@@ -87,7 +87,8 @@ void ABaseAgent::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	// start checking possible bleedout every second.
+	GetWorldTimerManager().SetTimer(BleedTickPerSecondHandler, this, &ABaseAgent::CheckBleed, 1.0f, true);
 
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::FromInt(RootComponent->IsSimulatingPhysics()));
 
@@ -136,7 +137,8 @@ void ABaseAgent::Aim(ABaseAgent* target)
 void ABaseAgent::Shoot()
 {
 	if (myGun) {
-		this->myGun->ShootGun(FMath::FRandRange(0, 45.0f));
+		//this->myGun->ShootGun(FMath::FRandRange(0, 45.0f));
+		this->myGun->ShootGun(0);
 	}
 }
 
@@ -190,6 +192,14 @@ void ABaseAgent::OnHit(class AActor* OtherActor, class UPrimitiveComponent* Othe
 			}
 		}
 		//EHitLocation location = AMetalHeadsGameMode::GetEnumValueFromString("EHitLocation", )
+	}
+}
+
+void ABaseAgent::CheckBleed() 
+{
+	// Get our status struct to handle bleedout (if applicable).
+	if (statusStruct.BleedTick()) {
+		Die(ECauseOfDeath::Hypooleum);
 	}
 }
 

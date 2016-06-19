@@ -136,7 +136,7 @@ void UGun::Fire() {
 
 
 		FVector spawnPos = potentialFlipbook->GetSocketLocation(TEXT("GunBarrel"));
-		FRotator spawnRot = this->GetOwner()->GetActorRotation();
+		FRotator spawnRot = initDirection.Rotation();
 
 
 		ABullet* bullet = this->World->SpawnActor<ABullet>(ABullet::StaticClass(), spawnPos, spawnRot);
