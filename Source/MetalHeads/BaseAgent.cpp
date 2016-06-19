@@ -4,6 +4,8 @@
 #include "BaseAgent.h"
 
 #include "Bullet.h"
+#include "Runtime/Engine/Classes/Components/SplineComponent.h"
+#include "Runtime/Engine/Classes/Components/SplineMeshComponent.h"
 
 
 // Sets default values
@@ -18,6 +20,8 @@ ABaseAgent::ABaseAgent()
 	myGun = CreateDefaultSubobject<UGun>(TEXT("MyGun"));
 	statusText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("StatusText"));
 	woundText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("WoundText"));
+	aimSpline = CreateDefaultSubobject<USplineComponent>(TEXT("AimSpline"));
+	aimMesh = CreateDefaultSubobject<USplineMeshComponent>(TEXT("AimMesh"));
 
 	statusText->SetText(TEXT("---"));
 	woundText->SetText(TEXT("No wounds"));
@@ -28,6 +32,10 @@ ABaseAgent::ABaseAgent()
 	rightArmBox = CreateDefaultSubobject<UBoxComponent>(TEXT("RightHitbox"));
 	leftLegBox = CreateDefaultSubobject<UBoxComponent>(TEXT("LeftLegHitbox"));
 	rightLegBox = CreateDefaultSubobject<UBoxComponent>(TEXT("RightLegHitbox"));
+
+	headAimLoc = CreateDefaultSubobject<USceneComponent>(TEXT("HeadAimLocation"));
+	bodyAimLoc = CreateDefaultSubobject<USceneComponent>(TEXT("BodyAimLocation"));
+	legsAimLoc = CreateDefaultSubobject<USceneComponent>(TEXT("LegsAimLocation"));
 
 	// Turn on collider physics
 	//headBox->SetNotifyRigidBodyCollision(true);
@@ -70,9 +78,15 @@ ABaseAgent::ABaseAgent()
 	leftLegBox->AttachTo(RootComponent);
 	rightLegBox->AttachTo(RootComponent);
 
+	headAimLoc->AttachTo(RootComponent);
+	bodyAimLoc->AttachTo(RootComponent);
+	legsAimLoc->AttachTo(RootComponent);
+
 	mainFlipbook->AttachTo(RootComponent);
 	statusText->AttachTo(RootComponent);
 	woundText->AttachTo(RootComponent);
+	aimSpline->AttachTo(RootComponent);
+	aimMesh->AttachTo(RootComponent);
 	//statusText->SetRelativeLocation(FVector(0, 0, 200.0f));
 
 	// Final tweaks before construction is done
@@ -87,11 +101,20 @@ void ABaseAgent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Set our default states
+	currentAction = EActionState::Idle;
+
 	// start checking possible bleedout every second.
 	GetWorldTimerManager().SetTimer(BleedTickPerSecondHandler, this, &ABaseAgent::CheckBleed, 1.0f, true);
 
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::FromInt(RootComponent->IsSimulatingPhysics()));
+	aimSpline->SetLocationAtSplinePoint(0, mainFlipbook->GetSocketLocation(TEXT("GunBarrel")), ESplineCoordinateSpace::World);
 
+	aimMesh->SetStartScale(FVector2D(0.1f, 0.1f));
+	aimMesh->SetEndScale(FVector2D(0.1f, 0.1f));
+	aimMesh->SetStartTangent(FVector(1, 0, 0));
+	aimMesh->SetEndTangent(FVector(1, 0, 0));
+	// Static mesh should be set in blueprint implimentation.
 }
 
 // Called every frame
@@ -106,15 +129,40 @@ void ABaseAgent::Tick( float DeltaTime )
 	{
 		AMetalHeadsGameMode::RotateOrtho(mainFlipbook, mainCam->ComponentToWorld.Rotator());
 		// Precook prototype text
-		FRotator rot = FRotator(45.0f, 90.0f, 0);
+		//FRotator rot = FRotator(45.0f, 90.0f, 0);
+		FRotator rot = mainCam->GetComponentRotation();
+		rot.Pitch += 90;
+		rot.Yaw += 180;
 		FVector pos = FVector(0, 0, 200.0f);
-		statusText->SetRelativeLocationAndRotation(pos, rot);
+		statusText->SetRelativeLocation(pos);
+		statusText->SetWorldRotation(rot);
 
 		// bootiful conversions
 		statusText->SetText(FText::FromString(AMetalHeadsGameMode::GetEnumValueToString("EGunState", (int32) myGun->currentGunState)));
 		//FRotator otherRot = mainFlipbook->GetComponentRotation();
 		
 		//statusText->SetText(FText::FromString(otherRot.ToString()));
+
+		// Update the aim render line
+		aimMesh->SetStartPosition(mainFlipbook->GetSocketLocation(TEXT("GunBarrel")));
+		//aimMesh->SetEndPosition(mainFlipbook->GetSocketLocation(TEXT("GunBarrel")) + AMetalHeadsGameMode::RIGHT() * 500);
+		aimMesh->SplineUpDir = mainCam->GetComponentLocation();
+
+		// Determine where the line should draw (if at all!)
+		if (currentAction == EActionState::Aiming && currentTarget) {
+			aimMesh->SetHiddenInGame(false);
+			if (currentAimLocation == EAimLocation::Head) {
+				aimMesh->SetEndPosition(currentTarget->headAimLoc->GetComponentLocation());
+			}
+			else if (currentAimLocation == EAimLocation::Body) {
+				aimMesh->SetEndPosition(currentTarget->bodyAimLoc->GetComponentLocation());
+			}
+			else if (currentAimLocation == EAimLocation::Legs) {
+				aimMesh->SetEndPosition(currentTarget->legsAimLoc->GetComponentLocation());
+			}
+		}else{
+			aimMesh->SetHiddenInGame(true);
+		}
 	}
 
 	//if (FMath::RandRange(1, 20) == 20) {
@@ -131,18 +179,53 @@ void ABaseAgent::SetupPlayerInputComponent(class UInputComponent* InputComponent
 
 void ABaseAgent::Aim(ABaseAgent* target)
 {
-	// TODO: Logic to lerp from max gun angle to min gun angle.
+	currentTarget = target;
+	currentAction = EActionState::Aiming;
+
+	currentAimTime = 0;
+
+	if (targetAimTime > 0.1) {
+		this->GetWorld()->GetTimerManager().SetTimer(AimingHandler, this, &ABaseAgent::AimTick, GetWorld()->DeltaTimeSeconds, true);
+	}
+	else {
+		// SHOOT ALL DAY ERRY DAY
+		Shoot();
+	}
+
+	
+	//aimSpline->SetLocationAtSplinePoint(1, target->GetActorLocation(), ESplineCoordinateSpace::World);
+
+}
+
+void ABaseAgent::AimTick()
+{
+	currentAimTime += GetWorld()->DeltaTimeSeconds;
+	if (currentAimTime >= targetAimTime) {
+		Shoot();
+	}
+}
+
+void ABaseAgent::StopAimTick()
+{
+	if (GetWorld()->GetTimerManager().IsTimerActive(AimingHandler)) {
+		GetWorld()->GetTimerManager().ClearTimer(AimingHandler);
+		currentAimTime = 0;
+		currentAction = EActionState::Idle;
+		// other reset logic would go here.
+	}
 }
 
 void ABaseAgent::Shoot()
 {
+	// Ladies and gentlemen, the most seemlying useless state change.
+	currentAction = EActionState::Shooting;
 	if (myGun) {
-		//this->myGun->ShootGun(FMath::FRandRange(0, 45.0f));
-		this->myGun->ShootGun(0);
+		this->myGun->ShootGun(currentAimTime);
 	}
+	currentAimTime = 0;
+	currentAction = EActionState::Idle;
 }
 
-// Step one: simply register hits on hitboxes
 void ABaseAgent::TakeWound(float woundChance, EHitLocation location) {
 	float result = FMath::RandRange(1, 100);
 	if (result <= woundChance) {
@@ -159,6 +242,9 @@ void ABaseAgent::TakeWound(float woundChance, EHitLocation location) {
 	}
 	else {
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, TEXT("Bullet deflected!"));
+		
+		// NOTE: there's not much that's needed here. Physics makes the bullets bounce by default!
+		// Perhaps a cool particle?
 	}
 
 	

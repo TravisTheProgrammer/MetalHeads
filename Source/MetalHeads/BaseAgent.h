@@ -15,6 +15,9 @@
 #include "GameFramework/Pawn.h"
 #include "BaseAgent.generated.h"
 
+class USplineComponent;
+class USplineMeshComponent;
+
 UCLASS(Blueprintable)
 class METALHEADS_API ABaseAgent : public APawn
 {
@@ -35,6 +38,13 @@ public:
 
 	// Tells the agent to enter the aim state.
 	virtual void Aim(ABaseAgent* target);
+
+	// Increments the aim angle, using the gun for normalization.
+	// Parameters are based on the chosen aim time for the agent.
+	virtual void AimTick();
+
+	// Call to stop aiming, if currently aiming. This will not trigger a shoot action.
+	virtual void StopAimTick();
 
 	// Fires the gun, depending on various internal parameters (aiming, moving, etc).
 	virtual void Shoot();
@@ -90,6 +100,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Hitboxes)
 		UBoxComponent* rightLegBox;
 
+	// Aim Locations (to be set in blueprint implimentation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AimLocation)
+		USceneComponent* headAimLoc;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AimLocation)
+		USceneComponent* bodyAimLoc;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AimLocation)
+		USceneComponent* legsAimLoc;
+
 	// Our current aiming "state"
 	UPROPERTY(EditAnywhere, Category = Aiming)
 		EAimLocation currentAimLocation;
@@ -98,11 +118,27 @@ public:
 		ABaseAgent* currentTarget;
 
 	UPROPERTY(EditAnywhere, Category = Aiming)
-		float aimTime;
+		float targetAimTime;
+
+	UPROPERTY(EditAnywhere, Category = Aiming)
+		float currentAimTime;
+
+	// Spline component to render aim line
+	// NOTE: Keeping around, but unlikely to be used, since I'm rendering a simple "line"!
+	UPROPERTY(EditAnywhere, Category = Aiming)
+		USplineComponent* aimSpline;
+
+	// Spline mesh for drawing the aim line
+	UPROPERTY(EditAnywhere, Category = Aiming)
+		USplineMeshComponent* aimMesh;
 
 	// If not none, is dead.
 	UPROPERTY(EditAnywhere, Category = Status)
 		ECauseOfDeath deathStatus = ECauseOfDeath::None;
+
+	// What the agent is currently doing
+	UPROPERTY(EditAnywhere, Category = State)
+		EActionState currentAction;
 
 	// TODO: See if I can rid this and use a death flipbook play length instead.
 	UPROPERTY()
@@ -111,6 +147,7 @@ public:
 	// Timer handlers
 	FTimerHandle DeathCountdownHandler;
 	FTimerHandle BleedTickPerSecondHandler;
+	FTimerHandle AimingHandler;
 
 	// Simple additional states
 	
