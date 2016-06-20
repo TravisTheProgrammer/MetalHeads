@@ -18,8 +18,13 @@ AAgentController::AAgentController()
 
 	/* Our sensing component to detect players by visibility and noise checks. */
 	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComp"));
-	PawnSensingComp->SetPeripheralVisionAngle(120.0f);
-	PawnSensingComp->SightRadius = 2000;
+	PawnSensingComp->SensingInterval = .25f;
+	PawnSensingComp->bOnlySensePlayers = false;
+	//PawnSensingComp->SetPeripheralVisionAngle(.f);
+
+
+	//PawnSensingComp->SetPeripheralVisionAngle(360.0f);
+	//PawnSensingComp->SightRadius = 2000;
 
 }
 
@@ -30,7 +35,7 @@ void AAgentController::BeginPlay()
 	/* This is the earliest moment we can bind our delegates to the component _safely_ */
 	if (PawnSensingComp)
 	{
-		PawnSensingComp->OnSeePawn.AddDynamic(this, &AAgentController::OnSeePawn);
+		PawnSensingComp->OnSeePawn.AddDynamic(this, &AAgentController::OnSeeAgent);
 	}
 
 }
@@ -101,13 +106,24 @@ void AAgentController::FindClosestEnemy()
 
 }
 
-void AAgentController::OnSeePawn(APawn* Pawn)
+void AAgentController::OnSeeAgent(APawn* enemyAgent)
 {
 	/*GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Found Enemy");
 
-
+	
 	int DesiredLocationKey = blackboardComponent->GetKeyID("DesiredLocation");
 	blackboardComponent->SetValueAsVector(DesiredLocationKey, Pawn->GetActorLocation());*/
+
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, enemyAgent->GetName());
+
+	APawn* derp = enemyAgent;
+	ABaseAgent* potentialEnemy = Cast<ABaseAgent>(enemyAgent);
+	ABaseAgent* myPawn = Cast<ABaseAgent>(GetPawn());
+	if (potentialEnemy && myPawn && potentialEnemy->currentTeam != myPawn->currentTeam) {
+		int targetKey = blackboardComponent->GetKeyID("EnemyAgent");
+		blackboardComponent->SetValueAsObject(targetKey, potentialEnemy);
+		// TODO: Validate logic to change target, in case we already have one.
+	}
 }
 
 void AAgentController::Test() {

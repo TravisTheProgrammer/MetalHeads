@@ -38,7 +38,7 @@ public:
 	/* Functions */
 
 	UFUNCTION()
-		void OnSeePawn(APawn* enemyAgent);
+	void OnSeeAgent(APawn* enemyAgent);
 
 	void FindClosestEnemy();
 	

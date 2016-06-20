@@ -27,12 +27,12 @@ ABaseAgent::ABaseAgent()
 	mainFlipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("AnimComponent"));
 	myGun = CreateDefaultSubobject<UGun>(TEXT("MyGun"));
 	statusText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("StatusText"));
-	woundText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("WoundText"));
+	//woundText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("WoundText"));
 	aimSpline = CreateDefaultSubobject<USplineComponent>(TEXT("AimSpline"));
 	aimMesh = CreateDefaultSubobject<USplineMeshComponent>(TEXT("AimMesh"));
 
 	statusText->SetText(TEXT("---"));
-	woundText->SetText(TEXT("No wounds"));
+	//woundText->SetText(TEXT("No wounds"));
 
 	headBox = CreateDefaultSubobject<UBoxComponent>(TEXT("HeadHitbox"));
 	torsoBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TorsoHitbox"));
@@ -92,9 +92,8 @@ ABaseAgent::ABaseAgent()
 
 	mainFlipbook->AttachTo(GetCapsuleComponent());
 	statusText->AttachTo(GetCapsuleComponent());
-	woundText->AttachTo(GetCapsuleComponent());
+	//woundText->AttachTo(GetCapsuleComponent());
 	aimSpline->AttachTo(GetCapsuleComponent());
-	aimMesh->AttachTo(GetCapsuleComponent());
 	//statusText->SetRelativeLocation(FVector(0, 0, 200.0f));
 
 	// Final tweaks before construction is done
@@ -108,8 +107,6 @@ ABaseAgent::ABaseAgent()
 void ABaseAgent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	this->
 
 	// Set our default states
 	currentAction = EActionState::Idle;
@@ -170,6 +167,8 @@ void ABaseAgent::Tick( float DeltaTime )
 			}
 			else if (currentAimLocation == EAimLocation::Legs) {
 				aimMesh->SetEndPosition(currentTarget->legsAimLoc->GetComponentLocation());
+			}else{
+				aimMesh->SetEndPosition(currentTarget->GetActorLocation() + FVector(0, 0, 90.0f));
 			}
 		}else{
 			aimMesh->SetHiddenInGame(true);
@@ -191,17 +190,20 @@ void ABaseAgent::SetupPlayerInputComponent(class UInputComponent* InputComponent
 
 void ABaseAgent::Aim(ABaseAgent* target)
 {
-	currentTarget = target;
-	currentAction = EActionState::Aiming;
+	if (currentAction != EActionState::Aiming){
+		currentTarget = target;
+		currentAction = EActionState::Aiming;
 
-	currentAimTime = 0;
+		currentAimTime = 0;
 
-	if (targetAimTime > 0.1) {
-		this->GetWorld()->GetTimerManager().SetTimer(AimingHandler, this, &ABaseAgent::AimTick, GetWorld()->DeltaTimeSeconds, true);
-	}
-	else {
-		// SHOOT ALL DAY ERRY DAY
-		Shoot();
+		if (targetAimTime > 0.1) {
+			this->GetWorld()->GetTimerManager().SetTimer(AimingHandler, this, &ABaseAgent::AimTick, GetWorld()->DeltaTimeSeconds, true);
+		}
+		else {
+			// SHOOT ALL DAY ERRY DAY
+			Shoot();
+		}
+
 	}
 
 	
@@ -233,7 +235,7 @@ void ABaseAgent::Shoot()
 	// Ladies and gentlemen, the most seemlying useless state change.
 	currentAction = EActionState::Shooting;
 	if (myGun) {
-		this->myGun->ShootGun(currentAimTime);
+		this->myGun->ShootGun(currentAimTime, currentTarget);
 	}
 	currentAimTime = 0;
 	// Ensure we're ready to take more actions

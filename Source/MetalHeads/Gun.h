@@ -9,6 +9,8 @@
 #include "Components/ActorComponent.h"
 #include "Gun.generated.h"
 
+class ABaseAgent;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class METALHEADS_API UGun : public UActorComponent
 {
@@ -95,6 +97,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "State")
 		EGunState currentGunState = EGunState::Ready;
 
+	UPROPERTY(EditAnywhere, Category = "AimTarget")
+		ABaseAgent* target;
+
 	/* Timers */
 
 	FTimerHandle CycleGunHandler;
@@ -104,7 +109,7 @@ public:
 	/* Functions */
 
 	// Public shoot handler.
-	void ShootGun(float shotAngle);
+	void ShootGun(float shotAngle, ABaseAgent* newTarget);
 
 private:
 

@@ -81,8 +81,8 @@ public:
 	// Placeholder info obj text
 	UPROPERTY(EditAnywhere)
 		UTextRenderComponent* statusText;
-	UPROPERTY(EditAnywhere)
-		UTextRenderComponent* woundText;
+	//UPROPERTY(EditAnywhere)
+		//UTextRenderComponent* woundText;
 
 	// Body colliders
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Hitboxes)

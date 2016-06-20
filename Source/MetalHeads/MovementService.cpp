@@ -22,7 +22,7 @@ void UMovementService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("UMyBTService TickNode"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("UMyBTService TickNode"));
 
 	AAgentController* AIController = Cast<AAgentController>(OwnerComp.GetOwner());
 

@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MetalHeads.h"
+#include "BaseAgent.h"
 #include "Gun.h"
 
 
@@ -34,12 +35,14 @@ void UGun::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentT
 	// ...
 }
 
-void UGun::ShootGun(float shotAngle) {
+void UGun::ShootGun(float shotAngle, ABaseAgent* newTarget) {
 
 	// Check if we can shoot the gun.
 	if (currentGunState != EGunState::Ready) {
 		return;
 	}
+
+	target = newTarget;
 
 	currentGunState = EGunState::Shooting;
 
@@ -119,13 +122,16 @@ void UGun::BurstFire() {
 }
 
 void UGun::Fire() {
-	FVector initDirection = this->GetOwner()->GetActorForwardVector();
-	initDirection.Normalize();
 
 	UPaperFlipbookComponent* potentialFlipbook = this->GetOwner()->FindComponentByClass<UPaperFlipbookComponent>();
-	if (!potentialFlipbook) {
+	if (!potentialFlipbook || !target) {
 		return;
 	}
+
+	FVector initDirection = target->GetActorLocation() - potentialFlipbook->GetSocketLocation(TEXT("GunBarrel"));
+	initDirection.Normalize();
+
+
 
 	for (int i = 0; i < bulletsPerShot; i++) {
 
