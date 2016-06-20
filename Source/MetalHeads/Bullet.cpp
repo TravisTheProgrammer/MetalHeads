@@ -54,7 +54,7 @@ void ABullet::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	if (bulletMovement->Velocity.Size() < 100.0f) {
+	if (bulletMovement->Velocity.Size() < minimumVelocity) {
 		Destroy();
 	}
 

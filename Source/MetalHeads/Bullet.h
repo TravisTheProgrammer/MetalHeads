@@ -49,5 +49,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		UPaperFlipbookComponent* myFlipbook;
 
+	// Any bullet slow than this will disappear. No dying to slo mo!
+	UPROPERTY(EditAnywhere)
+		float minimumVelocity = 1000.0f;
+
 	
 };

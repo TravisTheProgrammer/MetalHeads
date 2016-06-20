@@ -15,7 +15,15 @@ ABaseAgent::ABaseAgent()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Add default components to all properties in the editor
-	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+	//RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+
+	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+
+	GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate character to moving direction
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 640.f, 0.f);
+	GetCharacterMovement()->bConstrainToPlane = true;
+	GetCharacterMovement()->bSnapToPlaneAtStart = true;
+
 	mainFlipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("AnimComponent"));
 	myGun = CreateDefaultSubobject<UGun>(TEXT("MyGun"));
 	statusText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("StatusText"));
@@ -71,22 +79,22 @@ ABaseAgent::ABaseAgent()
 	leftLegBox->ComponentTags.Add("LeftLeg");
 	rightLegBox->ComponentTags.Add("RightLeg");
 
-	headBox->AttachTo(RootComponent);
-	torsoBox->AttachTo(RootComponent);
-	leftArmBox->AttachTo(RootComponent);
-	rightArmBox->AttachTo(RootComponent);
-	leftLegBox->AttachTo(RootComponent);
-	rightLegBox->AttachTo(RootComponent);
+	headBox->AttachTo(GetCapsuleComponent());
+	torsoBox->AttachTo(GetCapsuleComponent());
+	leftArmBox->AttachTo(GetCapsuleComponent());
+	rightArmBox->AttachTo(GetCapsuleComponent());
+	leftLegBox->AttachTo(GetCapsuleComponent());
+	rightLegBox->AttachTo(GetCapsuleComponent());
 
-	headAimLoc->AttachTo(RootComponent);
-	bodyAimLoc->AttachTo(RootComponent);
-	legsAimLoc->AttachTo(RootComponent);
+	headAimLoc->AttachTo(GetCapsuleComponent());
+	bodyAimLoc->AttachTo(GetCapsuleComponent());
+	legsAimLoc->AttachTo(GetCapsuleComponent());
 
-	mainFlipbook->AttachTo(RootComponent);
-	statusText->AttachTo(RootComponent);
-	woundText->AttachTo(RootComponent);
-	aimSpline->AttachTo(RootComponent);
-	aimMesh->AttachTo(RootComponent);
+	mainFlipbook->AttachTo(GetCapsuleComponent());
+	statusText->AttachTo(GetCapsuleComponent());
+	woundText->AttachTo(GetCapsuleComponent());
+	aimSpline->AttachTo(GetCapsuleComponent());
+	aimMesh->AttachTo(GetCapsuleComponent());
 	//statusText->SetRelativeLocation(FVector(0, 0, 200.0f));
 
 	// Final tweaks before construction is done
@@ -101,8 +109,11 @@ void ABaseAgent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	this->
+
 	// Set our default states
 	currentAction = EActionState::Idle;
+	movementStruct.currentDesination = this->GetActorLocation();
 
 	// start checking possible bleedout every second.
 	GetWorldTimerManager().SetTimer(BleedTickPerSecondHandler, this, &ABaseAgent::CheckBleed, 1.0f, true);
@@ -114,7 +125,7 @@ void ABaseAgent::BeginPlay()
 	aimMesh->SetEndScale(FVector2D(0.1f, 0.1f));
 	aimMesh->SetStartTangent(FVector(1, 0, 0));
 	aimMesh->SetEndTangent(FVector(1, 0, 0));
-	// Static mesh should be set in blueprint implimentation.
+	// Static spline mesh should be set in blueprint implimentation.
 }
 
 // Called every frame
@@ -166,7 +177,7 @@ void ABaseAgent::Tick( float DeltaTime )
 	}
 
 	//if (FMath::RandRange(1, 20) == 20) {
-	Shoot();
+	//Shoot();
 	//}
 }
 
@@ -175,6 +186,7 @@ void ABaseAgent::SetupPlayerInputComponent(class UInputComponent* InputComponent
 {
 	Super::SetupPlayerInputComponent(InputComponent);
 
+	// If I needed direct shortcuts etc, I'd put them here
 }
 
 void ABaseAgent::Aim(ABaseAgent* target)
@@ -202,6 +214,7 @@ void ABaseAgent::AimTick()
 	currentAimTime += GetWorld()->DeltaTimeSeconds;
 	if (currentAimTime >= targetAimTime) {
 		Shoot();
+		StopAimTick();
 	}
 }
 
@@ -223,6 +236,7 @@ void ABaseAgent::Shoot()
 		this->myGun->ShootGun(currentAimTime);
 	}
 	currentAimTime = 0;
+	// Ensure we're ready to take more actions
 	currentAction = EActionState::Idle;
 }
 

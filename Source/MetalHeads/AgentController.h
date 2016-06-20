@@ -42,5 +42,5 @@ public:
 
 	void FindClosestEnemy();
 	
-	
+	void Test();
 };

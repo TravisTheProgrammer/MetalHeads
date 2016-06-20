@@ -41,18 +41,19 @@ void AAgentController::Tick(float DeltaTime)
 	//FindClosestEnemy();
 
 
+
 }
 
 void AAgentController::Possess(APawn* InPawn)
 {
 	Super::Possess(InPawn);
 
-	UBehaviorTree *behaviourTreeObject = AMetalHeadsGameMode::LoadObjFromPath<UBehaviorTree>("BlackboardData'/Game/AI/BB_BaseAgent.BB_BaseAgent'");
+	UBehaviorTree *behaviourTreeObject = AMetalHeadsGameMode::LoadObjFromPath<UBehaviorTree>("BehaviorTree'/Game/AI/BT_BaseAgent.BT_BaseAgent'");
 
-	UBlackboardData *blackboardData = AMetalHeadsGameMode::LoadObjFromPath<UBlackboardData>("BehaviorTree'/Game/AI/BT_BaseAgent.BT_BaseAgent'");
+	UBlackboardData *blackboardData = AMetalHeadsGameMode::LoadObjFromPath<UBlackboardData>("BlackboardData'/Game/AI/BB_BaseAgent.BB_BaseAgent'");
 
-	//blackboardComponent->InitializeBlackboard(*blackboardData);
-	//behaviorTreeComponent->StartTree(*behaviourTreeObject);
+	blackboardComponent->InitializeBlackboard(*blackboardData);
+	behaviorTreeComponent->StartTree(*behaviourTreeObject);
 
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "ASSUMING DIRECT CONTROL" );
 }
@@ -107,5 +108,12 @@ void AAgentController::OnSeePawn(APawn* Pawn)
 
 	int DesiredLocationKey = blackboardComponent->GetKeyID("DesiredLocation");
 	blackboardComponent->SetValueAsVector(DesiredLocationKey, Pawn->GetActorLocation());*/
+}
+
+void AAgentController::Test() {
+	int MoveTargetKey = blackboardComponent->GetKeyID("MoveTarget");
+	AActor* actor = GetOwner();
+	if (actor)
+		blackboardComponent->SetValue<UBlackboardKeyType_Vector>(MoveTargetKey, actor->GetActorLocation() + AMetalHeadsGameMode::LEFT() * 500);
 }
 

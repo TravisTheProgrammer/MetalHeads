@@ -12,14 +12,14 @@
 #include "StatusEffect.h"
 #include "MovementStruct.h"
 
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "BaseAgent.generated.h"
 
 class USplineComponent;
 class USplineMeshComponent;
 
 UCLASS(Blueprintable)
-class METALHEADS_API ABaseAgent : public APawn
+class METALHEADS_API ABaseAgent : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -37,6 +37,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 	// Tells the agent to enter the aim state.
+	UFUNCTION(BlueprintCallable, Category = Aiming)
 	virtual void Aim(ABaseAgent* target);
 
 	// Increments the aim angle, using the gun for normalization.
@@ -44,15 +45,19 @@ public:
 	virtual void AimTick();
 
 	// Call to stop aiming, if currently aiming. This will not trigger a shoot action.
+	UFUNCTION(BlueprintCallable, Category = Aiming)
 	virtual void StopAimTick();
 
 	// Fires the gun, depending on various internal parameters (aiming, moving, etc).
+	UFUNCTION(BlueprintCallable, Category = Shooting)
 	virtual void Shoot();
 
 	// Take a wound from an incoming bullet... or if you're feeling malicious.
+	UFUNCTION(BlueprintCallable, Category = Hit)
 	virtual void TakeWound(float woundChance, EHitLocation location);
 
 	// Until death do us part (kill the agent). Pass in a cause of death.
+	UFUNCTION(BlueprintCallable, Category = Hit)
 	virtual void Die(ECauseOfDeath cod);
 
 	// Timer event to handle bleeding per second.
@@ -62,8 +67,6 @@ public:
 	// NOTE: Had to adjust function to work around a bug...
 	UFUNCTION()
 	virtual void  OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
-	// Placeholder for "take hit" functions
 
 	/* Properties */
 public:
